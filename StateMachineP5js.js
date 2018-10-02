@@ -1,10 +1,25 @@
-var stateMachineName = "Microwave";                                 // Name of the state machine to run
+var bgImg;
+var stateMachineName = "a";     // Name of the state machine to run
+
+// Switch between configure environment and state machine environment
+var configure = false;
+var stateMachine = true;
+
+//Configure
+var buttonConfigure;
+
+// Configure Palette
+var controlPalette = new ConfigurePalette();
+
+
 
 // Setup ---------------------------------------------------------------------------------------------
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);              // Full screen canvas
-  noLoop();
+  bgImg = loadImage("assets/background.jpg");
+  
+  //noLoop();
 
   setStateMachineConfig(stateMachineName);
   
@@ -18,19 +33,117 @@ function setup() {
       From: StatePositions.pde
   */  
   traverse(getInitialState());
+    
+  
+  //******Configure Button************
+  buttonConfigure = createButton('Configure');
+  buttonConfigure.position(10, 10);
+  buttonConfigure.mousePressed(configureEnvironment);
+  
+  
+  //******Configure Palette************
+  
+  var gui = new dat.GUI();
+  gui.remember(controlPalette);   // Gives the functionality to save the configuration
+  
+  // Folder 0
+  var f1 = gui.addFolder('Events');
+  f1.add(controlPalette, 'eventName');
+  f1.add(controlPalette, 'AddEvent');
+  
+  // Folder 1
+  var f1 = gui.addFolder('State');
+  f1.add(controlPalette, 'stateName');
+  f1.add(controlPalette, 'AddState');
+  
+  // Folder 2
+  var f2 = gui.addFolder('Transition');
+  f2.add(controlPalette, 'fromState');
+  f2.add(controlPalette, 'condition');
+  f2.add(controlPalette, 'toState');
+  f2.add(controlPalette, 'addTransition');
+  
+  // Folder 3
+  var f3 = gui.addFolder('UI');
+  f3.add(controlPalette, 'radius', 10, 100);
+  
+  // Folder 4
+  var f4 = gui.addFolder('StateMachine');
+  f4.add(controlPalette, 'stateMachineName');
+  f4.add(controlPalette, 'initialState');
+  
+  gui.add(controlPalette, 'Save');
 
-}
+  f1.open();
+  
+  
+  
+} // Setup ends here
+
 
 
 // Draw ---------------------------------------------------------------------------------------------
-
 function draw() {
-  background(0);
+  background(bgImg);
+  
+  
+  //**************************
+  // Configuration Environment
+  //**************************
+  
+  if(configure) {
+    
+    //******Configure Palette************  
+    
+    
+    
+    //******Configure Environment************    
+    //Drag 
+    ellipseMode(RADIUS);
+    if (states.length > 0) {
+      for (var i = 0; i < states.length; i++) {
+        var circle = states[i];
+        drawState(circle.x, circle.y, circle.name, circle.color, 30);
+      }
+    }
+  }
+  
+  // Draw Arrows between states
+  if (transitions.length > 0) {
+    var x1, y1, x2, y2;
+    
+    for(i in transitions) {
+      var transition = transitions[i];
+      var fromState = transition.fromState;
+      var toState = transition.toState;
+      
+    for(j in states) {
+       var state = states[j];
+       if(fromState == state.name) {
+         x1 = state.x;
+         y1 = state.y;
+       }
+       
+       if(toState == state.name) {
+         x2 = state.x;
+         y2 = state.y;
+       }
+     }
+     drawArrow(x1, y1, x2, y2, 30*2);
+    }    
+  }
+  
+  
+  //**************************
+  // State Machine Environment
+  //**************************
+  
+  
+  if(stateMachine) {
+  //******Local setup************
+
   var themeColor = color(250, 68, 130);                             // Theme color for the UI
 
- 
-  //******Local setup************
-  
   /** 
       Getting the position of all the states (positionJson) and drawing it on the UI
       Position, from: StatePositions.js
@@ -41,7 +154,7 @@ function draw() {
       var x = positionArray[i].position.x;
       var y = positionArray[i].position.y;
       var stateName = positionArray[i].stateName;
-      drawState(x, y, stateName, 255);
+      drawState(x, y, stateName, 255, 60);
    }
   
   //Draw arrows between the states
@@ -52,7 +165,7 @@ function draw() {
       
       var fromPosition = getStatePosition(fromState);  
       var toPosition = getStatePosition(toState);
-      drawArrow(fromPosition[0], fromPosition[1], toPosition[0], toPosition[1]);
+      drawArrow(fromPosition[0], fromPosition[1], toPosition[0], toPosition[1], 60);
    }
   
   //******After Data stream************
@@ -80,6 +193,6 @@ function draw() {
    
    // Update the color of the updated active state
    var currentStatePosition = getStatePosition(getCurrentState());                             // Get the position of the current state
-   drawState(currentStatePosition[0], currentStatePosition[1], getCurrentState(), themeColor); // Update the state with theme color/Make the state active 
-
-}
+   drawState(currentStatePosition[0], currentStatePosition[1], getCurrentState(), themeColor, 60); // Update the state with theme color/Make the state active 
+  }
+} // Draw ends here

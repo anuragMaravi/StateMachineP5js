@@ -1,22 +1,21 @@
-// State properties
-var stateRadius = 60; //Radius of the states
-//var stateColor = 255;
-
-// Arrow properties
-var arrowThickness = 2.0; //Thickness of the arrow
-var arrowColor = 200;
+/// Arrow properties
+var arrowThickness = 1.0; //Thickness of the arrow
+var arrowColor = (235, 240, 246);
 
 
 /**
   Draws the state and its label
 */
-function drawState(x, y, stateName, stateColor) {
-  fill(stateColor);
-  stroke(0);
-  strokeWeight(0);
+function drawState(x, y, stateName, stateColor, stateRadius) {
+  fill(255,255,255,120);
+  stroke(235, 240, 246);
+  strokeWeight(1);
   ellipse(x, y, 2*stateRadius, 2*stateRadius); // Cricle with diameter
+  
   textSize(16);                                // State label size
   fill(0);                                     // Label color
+  strokeWeight(0);
+
   textAlign(CENTER, CENTER);
   text(stateName, x, y);                       // Add label to the state
 }
@@ -25,7 +24,7 @@ function drawState(x, y, stateName, stateColor) {
 /**
   Draws the arrow between circles (states) having the points on their edges
 */
-function drawArrow(centerX0, centerY0, centerX1, centerY1) {
+function drawArrow(centerX0, centerY0, centerX1, centerY1, stateRadius) {
   
   var px0, py0, px1, py1;                                   // Points on the circles circumference
   var angle = atan2(centerY1-centerY0, centerX1-centerX0);  // the angle of the line joining centre of circle c0 to c1
