@@ -1,6 +1,5 @@
 var currentState = "";
 
-
 /**
   Checks for the possible transition on the current state
   Returns the next state

@@ -100,15 +100,15 @@ function draw() {
     //******Configure Environment************    
     //Drag 
     ellipseMode(RADIUS);
-    if (states.length > 0) {
-      for (var i = 0; i < states.length; i++) {
-        var circle = states[i];
-        drawState(circle.x, circle.y, circle.name, circle.color, 30);
+    console.log(stateConfigArray);
+    if (stateConfigArray.length > 0) {
+      for (var i = 0; i < stateConfigArray.length; i++) {
+        var circle = stateConfigArray[i];
+        drawState(circle.x, circle.y, circle.stateName, circle.color, 30);
       }
     }
-  }
-  
-  // Draw Arrows between states
+    
+    // Draw Arrows between states
   if (transitions.length > 0) {
     var x1, y1, x2, y2;
     
@@ -117,14 +117,14 @@ function draw() {
       var fromState = transition.fromState;
       var toState = transition.toState;
       
-    for(j in states) {
-       var state = states[j];
-       if(fromState == state.name) {
+    for(j in stateConfigArray) {
+       var state = stateConfigArray[j];
+       if(fromState == state.stateName) {
          x1 = state.x;
          y1 = state.y;
        }
        
-       if(toState == state.name) {
+       if(toState == state.stateName) {
          x2 = state.x;
          y2 = state.y;
        }
@@ -132,6 +132,10 @@ function draw() {
      drawArrow(x1, y1, x2, y2, 30*2);
     }    
   }
+    
+  }
+  
+  
   
   
   //**************************
@@ -149,11 +153,12 @@ function draw() {
       Position, from: StatePositions.js
       drawState, from: AddUIObjects.js
   */
-  var positionArray = getPositionJson();
-  for (i in positionArray) {
-      var x = positionArray[i].position.x;
-      var y = positionArray[i].position.y;
-      var stateName = positionArray[i].stateName;
+  var stateArr = getStateConfigArray();
+  for (i in stateArr) {
+    var state = stateArr[i]
+      var x = state.x;
+      var y = state.y;
+      var stateName = state.stateName;
       drawState(x, y, stateName, 255, 60);
    }
   

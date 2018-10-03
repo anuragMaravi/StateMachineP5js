@@ -11,29 +11,6 @@ var stateGap = 200;                                                             
 */
 
 
-/**
-  Creates a map of state and its position
-*/
-function setPosition(previousState, nextState, direction) {
-    var statePresent = isPositionPresent(nextState);
-    if(!statePresent) {
-      var coord = getStatePosition(previousState);  
-      var x = coord[0];
-      var y = coord[1];
-      
-      // conditions to get the position of the next state
-      if(direction == "N"){ y = y - stateGap; }
-      if(direction == "NE"){ x = x + stateGap; y = y - stateGap; }
-      if(direction == "E"){ x = x + stateGap; }
-      if(direction == "SE"){x = x + stateGap;y = y + stateGap; }
-      if(direction == "S"){y = y + stateGap; }
-      if(direction == "SW"){ x = x - stateGap; y = y + stateGap; }
-      if(direction == "W"){ x = x - stateGap; }
-      if(direction == "NW"){ x = x - stateGap; y = y - stateGap; }
-      
-      addStatePosition(nextState, x, y);
-    }
-}
 
 
 /**
@@ -43,14 +20,13 @@ function setPosition(previousState, nextState, direction) {
 var traverse = function(nextState) {
   if(!traversedStatesList.includes(nextState)){ 
     traversedStatesList.push(nextState);                                          // Add the state on which currently traversing to a list to avoid traversing again
-    var stateConfigArray = getStateConfigArray();
-    for (i in stateConfigArray) {                                                 // Traverse over all the states on configuration
-      var stateName = stateConfigArray[i].stateName;
+    var statesArray = getStateConfigArray();
+    for (i in statesArray) {                                                 // Traverse over all the states on configuration
+      var stateName = statesArray[i].stateName;
       if(stateName == nextState) {                                                // Traverse the transitions of the nextState only
-        var transitionArray = stateConfigArray[i].transition;
+        var transitionArray = statesArray[i].transition;
         for (j in transitionArray) {
           addTransition(stateName, transitionArray[j].event, transitionArray[j].nextState);      // Add transitions between states
-          setPosition(stateName, transitionArray[j].nextState, transitionArray[j].direction);    // Set the position of the state according to the direction
           while(traverse(transitionArray[j].nextState))
             traverse(transitionArray[j].nextState);                              //Recursively traversing the digraph until all the states are traversed
         }
@@ -98,15 +74,20 @@ function isPositionPresent(stateName) {
   Returns the position of a state
   Required: stateName
 */
-function getStatePosition(stateName) {
-  var positionArray = positionJson["positions"];
-  for (i in positionArray) {
-    if(positionArray[i].stateName == stateName) {     
-      var x = positionArray[i].position.x;
-      var y = positionArray[i].position.y;
-      return [x, y];
+function getStatePosition(a) {
+  var fx, fy;
+  var statesArray = getStateConfigArray();
+  for (i in statesArray) {
+    var state = statesArray[i];
+    if(state.stateName == a) {
+      var x = state.x;
+      var y = state.y;
+      var stateName = state.stateName;
+      fx = x;
+      fy = y;
     }
-  }  
+   }
+   return [fx, fy];
 }
 
 

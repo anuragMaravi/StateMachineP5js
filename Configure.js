@@ -2,14 +2,18 @@ var inputStateName, buttonAddState;
 var inputFrom, inputCondition, inputTo, buttonAddTrans;
 
 
-var states = []            // Configuration JSON
-var transitions = []
-var data = []
+var transitions = [];
+var data = [];
 var radius = 30;
+var eventsJArray = [];
+var transitionJArray = [];
+var statesJArray = [];
 
-var eventsJArray = []
-var transitionJArray = []
-var statesJArray = []
+
+//New Array
+var stateConfigArray = [];
+
+var x = 100;               // x, position of first state
 
 
 
@@ -18,10 +22,10 @@ var statesJArray = []
 function mousePressed()
 {
   // Make the state active
-  if (states.length > 0) {
-    for (var i = 0; i < states.length; i++) {
-      var state = states[i],
-          distance = dist(mouseX, mouseY, state.x, state.y);
+  if (stateConfigArray.length > 0) {
+    for (var i = 0; i < stateConfigArray.length; i++) {
+      var state = stateConfigArray[i];
+      distance = dist(mouseX, mouseY, state.x, state.y);
       if (distance < 60) {
         state.active = true;
         state.color = '#fff';
@@ -36,9 +40,9 @@ function mousePressed()
 // Run when the mouse/touch is dragging.
 // Update the poisition of the state dragged
 function mouseDragged() {
-  if (states.length > 0) {
-    for (var i = 0; i < states.length; i++) {
-      var state = states[i];
+  if (stateConfigArray.length > 0) {
+    for (var i = 0; i < stateConfigArray.length; i++) {
+      var state = stateConfigArray[i];
       if (state.active) {
         state.x = mouseX;
         state.y = mouseY;
@@ -85,24 +89,35 @@ var ConfigurePalette = function() {
   this.AddState = function(){
     var name = this.stateName;
     
-    states.push({ x: 100, y: 100, color: '#fff', active: false , name: name});
-  
+    //Initial position of the state, when added
+
+    var statesObj = new Object();
+    statesObj.stateName = this.stateName;
+    statesObj.x = x;
+    statesObj.y = 100;
+    statesObj.color = '#fff';
+    statesObj.active = false;
+    statesObj.transition = [];
+    stateConfigArray.push(statesObj);
+    x = x+radius*3;
      ellipseMode(RADIUS);
-      if (states.length > 0) {
-        for (var i = 0; i < states.length; i++) {
-          var state = states[i];
-          drawState(state.x, state.y, name, state.color);
+      if (stateConfigArray.length > 0) {
+        for (var i = 0; i < stateConfigArray.length; i++) {
+          var state = stateConfigArray[i];
+          drawState(state.x, state.y, statesObj.stateName, state.color);
         }
      }
   }
   
+  // On AddEvent Pressed
   this.AddEvent = function(){
     var eventName = this.eventName;
     var eventObj = new Object();
     eventObj.eventName = eventName;
     eventObj.eventType = "discrete";
-    eventsJArray.push(eventsJArray);
+    eventsJArray.push(eventObj);
   }
+  
   
   // On AddTransition pressed
   this.addTransition = function(){
@@ -151,6 +166,16 @@ var ConfigurePalette = function() {
         statesObj.stateName = stateName;
         statesObj.transition = transitionJArray;
         statesJArray.push(statesObj);
+        
+        if (stateConfigArray.length > 0) {
+          for (var i = 0; i < stateConfigArray.length; i++) {
+            var state = stateConfigArray[i];
+            if (state.stateName == stateName) {
+              state.transition = transitionJArray;
+              break;
+            }
+          }
+        }
       } 
     } else alert("Empty parameter");
     console.log(statesJArray);
@@ -162,22 +187,23 @@ var ConfigurePalette = function() {
     var obj = new Object();
     obj.stateMachineName = this.stateMachineName;
     obj.initialState = this.initialState;
-    obj.events = ['x'];
-    obj.states = statesJArray;
-    
+    obj.events = eventsJArray;
+    obj.states = stateConfigArray;
+    data.push(obj);
     // Final data on configuration file
     var configObj = new Object();
-    data.push(obj);
-    configObj.config = data;
-    
-    console.log(configObj);
+    configObj.config = data;                                            // configObj: Final Json created
     download('config_direction.json', JSON.stringify(configObj));
     location.reload();
-  }
-  
+  } 
 };
 
-//Download the configuration JSON file
+
+
+
+/**
+  Download the configuration JSON file
+*/
 function download(filename, text) {
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
