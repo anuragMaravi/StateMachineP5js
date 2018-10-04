@@ -1,0 +1,71 @@
+{
+  "config": [
+    {
+      "stateMachineName": "a",
+      "initialState": "Typing",
+      "events": [
+        {
+          "eventName": "typing",
+          "eventType": "discrete"
+        },
+        {
+          "eventName": "Door Open",
+          "eventType": "discrete"
+        },
+        {
+          "eventName": "Door Close",
+          "eventType": "discrete"
+        }
+      ],
+      "states": [
+        {
+          "stateName": "Door Open",
+          "x": 430,
+          "y": 323,
+          "color": "#fff",
+          "active": false,
+          "transition": [
+            {
+              "event": "Door Close",
+              "nextState": "Door Close",
+              "direction": "N"
+            }
+          ]
+        },
+        {
+          "stateName": "Door Close",
+          "x": 805,
+          "y": 327,
+          "color": "#fff",
+          "active": false,
+          "transition": [
+            {
+              "event": "typing",
+              "nextState": "Typing",
+              "direction": "N"
+            }
+          ]
+        },
+        {
+          "stateName": "Typing",
+          "x": 618,
+          "y": 541,
+          "color": "#fff",
+          "active": false,
+          "transition": [
+            {
+              "event": "Door Open",
+              "nextState": "Door Open",
+              "direction": "N"
+            },
+            {
+              "event": "Door Close",
+              "nextState": "Door Close",
+              "direction": "N"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

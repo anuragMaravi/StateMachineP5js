@@ -6,8 +6,7 @@ var stateMachineConfig;
   Preload the configuration file before setup
 */
 function preload() {
-  var x = "";
-  dataJson = loadJSON('config_direction.json');    // Configuration JSON file
+  dataJson = loadJSON('downloads/config_direction3.json');    // Configuration JSON file
 }
 
 
@@ -56,6 +55,7 @@ function getValidEvents() {
   Checks if the event is valid for current state machine
 */
 function isEventValid(eventName) {
+  console.log(eventName);
   if(getValidEvents().includes(eventName))
     return true;
   else return false;  

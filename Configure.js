@@ -46,8 +46,14 @@ function mouseDragged() {
       if (state.active) {
         state.x = mouseX;
         state.y = mouseY;
-
         break;
+      }
+      
+      //Testing@@@@@@@@@@@@@@@@@@@@
+      distance = dist(mouseX, mouseY, state.x, state.y);
+      if (distance < 60) {
+        console.log("Found Source: " + state.stateName);
+        
       }
     }
   }
@@ -83,31 +89,22 @@ var ConfigurePalette = function() {
   this.fromState = '';
   this.condition = '';
   this.toState = '';
-  this.radius = 30;
+  //this.radius = 30;
   
   // On AddState pressed
   this.AddState = function(){
     var name = this.stateName;
-    
-    //Initial position of the state, when added
-
     var statesObj = new Object();
     statesObj.stateName = this.stateName;
     statesObj.x = x;
-    statesObj.y = 100;
+    statesObj.y = 200;
     statesObj.color = '#fff';
     statesObj.active = false;
     statesObj.transition = [];
     stateConfigArray.push(statesObj);
     x = x+radius*3;
-     ellipseMode(RADIUS);
-      if (stateConfigArray.length > 0) {
-        for (var i = 0; i < stateConfigArray.length; i++) {
-          var state = stateConfigArray[i];
-          drawState(state.x, state.y, statesObj.stateName, state.color);
-        }
-     }
   }
+  
   
   // On AddEvent Pressed
   this.AddEvent = function(){
@@ -116,6 +113,8 @@ var ConfigurePalette = function() {
     eventObj.eventName = eventName;
     eventObj.eventType = "discrete";
     eventsJArray.push(eventObj);
+    
+    
   }
   
   
@@ -126,10 +125,8 @@ var ConfigurePalette = function() {
     var eventName = this.condition;
     var nextState = this.toState;
     var direction = "N";
-  
     // For dragging states
     transitions.push({fromState: stateName, event: eventName, toState: nextState});
-   
     // In case of duplicate
     if(statesJArray.length > 0) {
       for(var i = 0; i < statesJArray.length; i++) {
@@ -151,7 +148,6 @@ var ConfigurePalette = function() {
           } 
       }
     }
-    
     // In case of non duplicate
     if(stateName != "" || eventName != "" || nextState != "" || direction != ""){  
       if(!duplicate) {
@@ -161,12 +157,10 @@ var ConfigurePalette = function() {
         transitionObj.nextState = nextState;
         transitionObj.direction = direction;
         transitionJArray.push(transitionObj);
-  
         var statesObj = new Object();
         statesObj.stateName = stateName;
         statesObj.transition = transitionJArray;
         statesJArray.push(statesObj);
-        
         if (stateConfigArray.length > 0) {
           for (var i = 0; i < stateConfigArray.length; i++) {
             var state = stateConfigArray[i];
@@ -192,24 +186,9 @@ var ConfigurePalette = function() {
     data.push(obj);
     // Final data on configuration file
     var configObj = new Object();
-    configObj.config = data;                                            // configObj: Final Json created
-    download('config_direction.json', JSON.stringify(configObj));
+    configObj.config = data;       // configObj: Final Json created
+    saveJSON(configObj, 'config_direction.json');
     location.reload();
   } 
+  
 };
-
-
-
-
-/**
-  Download the configuration JSON file
-*/
-function download(filename, text) {
-  var element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  element.setAttribute('download', filename);
-  element.style.display = 'none';
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
-}

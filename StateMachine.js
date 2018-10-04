@@ -6,18 +6,21 @@ var currentState = "";
 */
 function getNextState(currentState, eventLabel) {
   var transitionArray = getTransitions();
+  console.log(transitionArray);
   for (i in transitionArray) {
-      var fromState = transitionArray[i].fromState;      
+      var fromState = transitionArray[i].fromState; 
       if(fromState == currentState) {
         var condition = transitionArray[i].condition;
+        console.log(condition + eventLabel);
         if(condition == eventLabel) {
           return transitionArray[i].toState;
         } else {
           console.log("No transition for this state");
-          return "Error";
         }  
       }    
    }
+   return "Error";
+
 }
 
 
